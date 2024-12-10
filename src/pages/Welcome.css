@@ -1,0 +1,19 @@
+.welcome {
+  background-image: url("../assets/picasso.jpg");
+  background-size: cover;
+  background-position: center;
+  height: 100vh;
+  color: rgba(21, 59, 226, 0.945);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  text-align: center;
+}
+
+.welcome a {
+  margin: 10px;
+  color: rgb(255, 255, 255);
+  font-size: 20px;
+  text-decoration: none;
+}
