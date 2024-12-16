@@ -7,7 +7,6 @@ const WelcomePage = () => {
       <h1>Welcome to Picasso Restaurant</h1>
       <nav>
         <Link to="/menu">Menu</Link>
-        <Link to="/about">About</Link>
       </nav>
     </div>
   );

@@ -1,40 +1,38 @@
 import { useState, useEffect } from "react";
-import { Link, useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { Meal } from "../MealTypes";
-import "./Meals.css";
+import "./Meals.css"; // Importing the enhanced CSS
 
-const CategoryMeals = () => {
-  const { category } = useParams<{ category: string }>();
+const AreaMeals = () => {
+  const { area } = useParams<{ area: string }>();
   const [meals, setMeals] = useState<Meal[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>("");
 
   const API_URL = import.meta.env.VITE_MEALDB_API;
 
   useEffect(() => {
-    const fetchMealsByCategory = async () => {
-      setLoading(true);
+    const fetchMealsByArea = async () => {
       try {
-        const response = await fetch(`${API_URL}/filter.php?c=${category}`);
+        setLoading(true);
+        const response = await fetch(`${API_URL}/filter.php?a=${area}`);
         const data = await response.json();
         if (data.meals) {
           setMeals(data.meals);
         } else {
-          setError("No meals found for this category.");
+          setError("No meals found for this area.");
         }
       } catch (err) {
         setError("Error fetching meals.");
-        console.error("Error fetching meals:", err);
+        console.error(err);
       } finally {
         setLoading(false);
       }
     };
 
-    if (category) {
-      fetchMealsByCategory();
-    }
-  }, [category, API_URL]);
+    fetchMealsByArea();
+  }, [area, API_URL]);
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
@@ -51,9 +49,9 @@ const CategoryMeals = () => {
 
   return (
     <div>
-      <h1>{category} Meals</h1>
+      <h1>{area} Dishes</h1>
 
-      {/* Serch Areia */}
+      {/* Search Area */}
       <div className="search-area">
         <input
           type="text"
@@ -64,7 +62,7 @@ const CategoryMeals = () => {
       </div>
 
       <div className="meals-grid">
-        {filteredMeals.map((meal, index) => (
+        {filteredMeals.map((meal) => (
           <div key={meal.idMeal} className="meal-card">
             <img
               src={meal.strMealThumb}
@@ -73,12 +71,7 @@ const CategoryMeals = () => {
             />
             <div className="meal-info">
               <h3>{meal.strMeal}</h3>
-              <Link
-                to={`/meal/${meal.idMeal}`}
-                className={`see-more-link ${
-                  index === filteredMeals.length - 1 ? "last-meal" : ""
-                }`}
-              >
+              <Link to={`/meal/${meal.idMeal}`} className="see-more-link">
                 See More
               </Link>
             </div>
@@ -89,4 +82,4 @@ const CategoryMeals = () => {
   );
 };
 
-export default CategoryMeals;
+export default AreaMeals;

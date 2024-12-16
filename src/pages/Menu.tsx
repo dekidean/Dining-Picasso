@@ -1,124 +1,147 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-// import { Link } from "react-router-dom";
 import { Category, Area, Meal } from "../MealTypes";
+import { Link } from "react-router-dom";
+import "./Menu.css"; // Importing the enhanced CSS
 
 const Menu = () => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [areas, setAreas] = useState<Area[]>([]);
   const [allMeals, setAllMeals] = useState<Meal[]>([]);
-  const [isNationalDishes, setIsNationalDishes] = useState(false);
-  const [isAllMeals, setIsAllMeals] = useState(false);
+  const [view, setView] = useState<"categories" | "areas" | "allMeals">(
+    "categories"
+  );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState<string>("");
 
   const API_URL = import.meta.env.VITE_MEALDB_API;
 
-  // Fetch categories (meal types)
   useEffect(() => {
-    const fetchCategories = async () => {
-      setLoading(true);
+    const fetchData = async () => {
       try {
-        const response = await axios.get(`${API_URL}/list.php?c=list`);
-        console.log("Categories:", response.data);
-        setCategories(response.data.meals);
-        setError(null);
-      } catch (error) {
-        setError("Error fetching categories.");
-        console.error("Error fetching categories:", error);
+        setLoading(true);
+        const [categoriesRes, areasRes, allMealsRes] = await Promise.all([
+          axios.get(`${API_URL}/list.php?c=list`),
+          axios.get(`${API_URL}/list.php?a=list`),
+          axios.get(`${API_URL}/search.php?s=`),
+        ]);
+
+        setCategories(categoriesRes.data.meals || []);
+        setAreas(areasRes.data.meals || []);
+        setAllMeals(allMealsRes.data.meals || []);
+      } catch (err) {
+        setError("Error fetching data");
+        console.error(err);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchCategories();
+    fetchData();
   }, [API_URL]);
 
-  // Fetch areas (national dishes)
-  useEffect(() => {
-    const fetchAreas = async () => {
-      setLoading(true);
-      try {
-        const response = await axios.get(`${API_URL}/list.php?a=list`);
-        console.log("Areas:", response.data);
-        setAreas(response.data.meals);
-        setError(null);
-      } catch (error) {
-        setError("Error fetching areas.");
-        console.error("Error fetching areas:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
+  };
 
-    fetchAreas();
-  }, [API_URL]);
+  const filteredCategories = categories.filter((category) =>
+    category.strCategory.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
-  // Fetch all meals
-  useEffect(() => {
-    const fetchAllMeals = async () => {
-      setLoading(true);
-      try {
-        const response = await axios.get(`${API_URL}/search.php?s=`);
-        console.log("All Meals:", response.data);
-        setAllMeals(response.data.meals);
-        setError(null);
-      } catch (error) {
-        setError("Error fetching all meals.");
-        console.error("Error fetching all meals:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const filteredAreas = areas.filter((area) =>
+    area.strArea.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
-    fetchAllMeals();
-  }, [API_URL]);
+  const filteredAllMeals = allMeals.filter((meal) =>
+    meal.strMeal.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  if (error) {
-    return <div>{error}</div>;
-  }
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>{error}</p>;
 
   return (
     <div>
-      <h1>Menu</h1>
-      <button
-        onClick={() => {
-          setIsAllMeals(false);
-          setIsNationalDishes(false);
-        }}
-      >
-        Categories
-      </button>
-      <button
-        onClick={() => {
-          setIsAllMeals(false);
-          setIsNationalDishes(true);
-        }}
-      >
-        National Dishes
-      </button>
-      <button
-        onClick={() => {
-          setIsAllMeals(true);
-          setIsNationalDishes(false);
-        }}
-      >
-        All Meals
-      </button>
+      {/* Conditional Search Area and Button Group */}
+      <div className="button-group">
+        {view === "categories" && (
+          <div className="search-area">
+            <input
+              type="text"
+              placeholder="Search for Categories"
+              value={searchQuery}
+              onChange={handleSearch}
+            />
+          </div>
+        )}
+        <button
+          onClick={() => setView("categories")}
+          className={`menu-button ${view === "categories" ? "active" : ""}`}
+        >
+          Categories
+        </button>
 
-      <ul>
-        {isAllMeals
-          ? allMeals.map((meal) => <li key={meal.idMeal}>{meal.strMeal}</li>) // Show all meals
-          : isNationalDishes
-          ? areas.map((area) => <li key={area.strArea}>{area.strArea}</li>) // Show national dishes
-          : categories.map((category) => (
-              <li key={category.strCategory}>{category.strCategory}</li> // Show categories
-            ))}
-      </ul>
+        {view === "areas" && (
+          <div className="search-area">
+            <input
+              type="text"
+              placeholder="Search for National Dishes"
+              value={searchQuery}
+              onChange={handleSearch}
+            />
+          </div>
+        )}
+        <button
+          onClick={() => setView("areas")}
+          className={`menu-button ${view === "areas" ? "active" : ""}`}
+        >
+          National Dishes
+        </button>
+
+        {view === "allMeals" && (
+          <div className="search-area">
+            <input
+              type="text"
+              placeholder="Search All Meals"
+              value={searchQuery}
+              onChange={handleSearch}
+            />
+          </div>
+        )}
+        <button
+          onClick={() => setView("allMeals")}
+          className={`menu-button ${view === "allMeals" ? "active" : ""}`}
+        >
+          All Meals
+        </button>
+      </div>
+
+      <div className="menu-grid">
+        {view === "categories" &&
+          filteredCategories.map((category) => (
+            <div key={category.strCategory} className="menu-card">
+              <Link to={`/category/${category.strCategory}`}>
+                <h3>{category.strCategory}</h3>
+              </Link>
+            </div>
+          ))}
+        {view === "areas" &&
+          filteredAreas.map((area) => (
+            <div key={area.strArea} className="menu-card">
+              <Link to={`/area/${area.strArea}`}>
+                <h3>{area.strArea}</h3>
+              </Link>
+            </div>
+          ))}
+        {view === "allMeals" &&
+          filteredAllMeals.map((meal) => (
+            <div key={meal.idMeal} className="menu-card">
+              <Link to={`/meal/${meal.idMeal}`}>
+                <h3>{meal.strMeal}</h3>
+              </Link>
+            </div>
+          ))}
+      </div>
     </div>
   );
 };

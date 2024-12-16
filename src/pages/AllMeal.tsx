@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { Meal } from "../MealTypes";
+import "./Meals.css";
 
 const AllMeals = () => {
   const [meals, setMeals] = useState<Meal[]>([]);
@@ -37,40 +38,23 @@ const AllMeals = () => {
   return (
     <div>
       <h1>All Meals</h1>
-      <table style={{ width: "100%", borderCollapse: "collapse" }}>
-        <thead>
-          <tr>
-            <th style={{ border: "1px solid black", padding: "8px" }}>No.</th>
-            <th style={{ border: "1px solid black", padding: "8px" }}>Name</th>
-            <th style={{ border: "1px solid black", padding: "8px" }}>
-              Category
-            </th>
-            <th style={{ border: "1px solid black", padding: "8px" }}>Area</th>
-            <th style={{ border: "1px solid black", padding: "8px" }}>
-              Details
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          {meals.map((meal, index) => (
-            <tr
-              key={meal.idMeal}
-              style={{
-                backgroundColor: index % 2 === 0 ? "#f9f9f9" : "#fff",
-                border: "1px solid black",
-              }}
-            >
-              <td style={{ padding: "8px" }}>{index + 1}</td>
-              <td style={{ padding: "8px" }}>{meal.strMeal}</td>
-              <td style={{ padding: "8px" }}>{meal.strCategory || "N/A"}</td>
-              <td style={{ padding: "8px" }}>{meal.strArea || "N/A"}</td>
-              <td style={{ padding: "8px" }}>
-                <Link to={`/meal/${meal.idMeal}`}>View Details</Link>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <div className="meals-grid">
+        {meals.map((meal) => (
+          <div key={meal.idMeal} className="meal-card">
+            <img
+              src={meal.strMealThumb}
+              alt={meal.strMeal}
+              className="meal-image"
+            />
+            <div className="meal-info">
+              <h3>{meal.strMeal}</h3>
+              <Link to={`/meal/${meal.idMeal}`} className="see-more-link">
+                See More
+              </Link>
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };
