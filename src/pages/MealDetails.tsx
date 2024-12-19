@@ -7,7 +7,7 @@ const MealDetails = () => {
   const { idMeal } = useParams<{ idMeal: string }>();
   const [meal, setMeal] = useState<Meal | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string>();
   const API_URL = import.meta.env.VITE_MEALDB_API;
   const navigate = useNavigate();
 
@@ -27,7 +27,8 @@ const MealDetails = () => {
     } finally {
       setLoading(false);
     }
-  }, [API_URL, idMeal]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [idMeal]);
 
   const fetchRandomMeal = async () => {
     try {

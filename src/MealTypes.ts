@@ -18,3 +18,9 @@ export interface Meal {
 
   [key: string]: string | number | null | string[] | object;
 }
+
+export enum View {
+  Categories = "categories",
+  Areas = "areas",
+  AllMeals = "allMeals",
+}

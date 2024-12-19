@@ -39,7 +39,7 @@ const AllMeals = () => {
     <div>
       <h1>All Meals</h1>
       <div className="meals-grid">
-        {meals.map((meal) => (
+        {meals.map((meal: Meal) => (
           <div key={meal.idMeal} className="meal-card">
             <img
               src={meal.strMealThumb}

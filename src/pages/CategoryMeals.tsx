@@ -14,19 +14,15 @@ const CategoryMeals = () => {
 
   useEffect(() => {
     const fetchMealsByCategory = async () => {
-      setLoading(true);
       try {
+        setLoading(true);
         const response = await fetch(`${API_URL}/filter.php?c=${category}`);
         const data = await response.json();
-        if (data.meals) {
-          setMeals(data.meals);
-        } else {
-          setError("No meals found for this category.");
-        }
+        setMeals(data.meals || []);
+        setLoading(false);
       } catch (err) {
         setError("Error fetching meals.");
         console.error("Error fetching meals:", err);
-      } finally {
         setLoading(false);
       }
     };
@@ -34,16 +30,15 @@ const CategoryMeals = () => {
     if (category) {
       fetchMealsByCategory();
     }
-  }, [category, API_URL]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [category]);
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
   };
 
-  const filteredMeals = meals.filter(
-    (meal) =>
-      meal.strMeal.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      meal.idMeal.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredMeals = meals.filter((meal: Meal) =>
+    meal.idMeal.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   if (loading) return <p>Loading meals...</p>;
@@ -53,7 +48,7 @@ const CategoryMeals = () => {
     <div>
       <h1>{category} Meals</h1>
 
-      {/* Serch Areia */}
+      {/* Search Area */}
       <div className="search-area">
         <input
           type="text"
@@ -63,8 +58,9 @@ const CategoryMeals = () => {
         />
       </div>
 
+      {/* Meals Grid */}
       <div className="meals-grid">
-        {filteredMeals.map((meal, index) => (
+        {filteredMeals.map((meal: Meal, index) => (
           <div key={meal.idMeal} className="meal-card">
             <img
               src={meal.strMealThumb}
