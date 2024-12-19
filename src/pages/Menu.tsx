@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { Category, Area, Meal, View } from "../MealTypes";
+import { Category, Area, Meal, ViewByModel } from "../MealTypes";
 import { Link } from "react-router-dom";
 import "./Menu.css";
 import SearchArea from "./SearchArea";
@@ -9,7 +9,7 @@ const Menu = () => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [areas, setAreas] = useState<Area[]>([]);
   const [allMeals, setAllMeals] = useState<Meal[]>([]);
-  const [view, setView] = useState<View>(View.Categories);
+  const [view, setView] = useState<ViewByModel>(ViewByModel.Categories);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>("");
@@ -61,9 +61,8 @@ const Menu = () => {
 
   return (
     <div>
-      {/* Conditional Search Area and Button Group */}
       <div className="button-group">
-        {view === View.Categories && (
+        {view === ViewByModel.Categories && (
           <SearchArea
             placeholder="Search for Categories"
             onChange={handleSearch}
@@ -71,13 +70,15 @@ const Menu = () => {
           />
         )}
         <button
-          onClick={() => setView(View.Categories)}
-          className={`menu-button ${view === View.Categories ? "active" : ""}`}
+          onClick={() => setView(ViewByModel.Categories)}
+          className={`menu-button ${
+            view === ViewByModel.Categories ? "active" : ""
+          }`}
         >
           Categories
         </button>
 
-        {view === View.Areas && (
+        {view === ViewByModel.Areas && (
           <SearchArea
             placeholder="Search for National Dishes"
             onChange={handleSearch}
@@ -85,13 +86,15 @@ const Menu = () => {
           />
         )}
         <button
-          onClick={() => setView(View.Areas)}
-          className={`menu-button ${view === View.Areas ? "active" : ""}`}
+          onClick={() => setView(ViewByModel.Areas)}
+          className={`menu-button ${
+            view === ViewByModel.Areas ? "active" : ""
+          }`}
         >
           National Dishes
         </button>
 
-        {view === View.AllMeals && (
+        {view === ViewByModel.AllMeals && (
           <SearchArea
             placeholder="Search All Meals"
             onChange={handleSearch}
@@ -99,38 +102,39 @@ const Menu = () => {
           />
         )}
         <button
-          onClick={() => setView(View.AllMeals)}
-          className={`menu-button ${view === View.AllMeals ? "active" : ""}`}
+          onClick={() => setView(ViewByModel.AllMeals)}
+          className={`menu-button ${
+            view === ViewByModel.AllMeals ? "active" : ""
+          }`}
         >
           All Meals
         </button>
       </div>
 
       <div className="menu-grid">
-        {view === View.Categories &&
-          filteredCategories.map((category) => (
-            <div key={category.strCategory} className="menu-card">
-              <Link to={`/category/${category.strCategory}`}>
-                <h3>{category.strCategory}</h3>
-              </Link>
-            </div>
-          ))}
-        {view === View.Areas &&
-          filteredAreas.map((area) => (
-            <div key={area.strArea} className="menu-card">
-              <Link to={`/area/${area.strArea}`}>
-                <h3>{area.strArea}</h3>
-              </Link>
-            </div>
-          ))}
-        {view === View.AllMeals &&
-          filteredAllMeals.map((meal) => (
-            <div key={meal.idMeal} className="menu-card">
-              <Link to={`/meal/${meal.idMeal}`}>
-                <h3>{meal.strMeal}</h3>
-              </Link>
-            </div>
-          ))}
+        {view === ViewByModel.Categories
+          ? filteredCategories.map((category) => (
+              <div key={category.strCategory} className="menu-card">
+                <Link to={`/category/${category.strCategory}`}>
+                  <h3>{category.strCategory}</h3>
+                </Link>
+              </div>
+            ))
+          : view === ViewByModel.Areas
+          ? filteredAreas.map((area) => (
+              <div key={area.strArea} className="menu-card">
+                <Link to={`/area/${area.strArea}`}>
+                  <h3>{area.strArea}</h3>
+                </Link>
+              </div>
+            ))
+          : filteredAllMeals.map((meal) => (
+              <div key={meal.idMeal} className="menu-card">
+                <Link to={`/meal/${meal.idMeal}`}>
+                  <h3>{meal.strMeal}</h3>
+                </Link>
+              </div>
+            ))}
       </div>
     </div>
   );

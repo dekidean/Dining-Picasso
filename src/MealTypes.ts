@@ -19,7 +19,7 @@ export interface Meal {
   [key: string]: string | number | null | string[] | object;
 }
 
-export enum View {
+export enum ViewByModel {
   Categories = "categories",
   Areas = "areas",
   AllMeals = "allMeals",
