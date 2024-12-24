@@ -1,0 +1,60 @@
+.welcome {
+  background-image: url("../assets/picasso.jpg");
+  background-size: cover;
+  background-position: center;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  text-align: center;
+  position: relative;
+}
+
+.welcome::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 80%;
+  height: 30%;
+  background-color: rgba(255, 255, 255, 0.5);
+  transform: translate(-50%, -50%);
+  border-radius: 15px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+}
+
+.welcome h1 {
+  position: relative;
+  z-index: 1;
+  color: white;
+  font-size: clamp(2rem, 5vw, 4rem);
+}
+
+.welcome nav {
+  position: relative;
+  z-index: 1;
+  margin-top: 20px;
+}
+
+.welcome a {
+  margin: 10px;
+  color: white;
+  font-size: clamp(1rem, 3vw, 2rem);
+  text-decoration: none;
+  transition: all 0.3s ease-in-out;
+}
+
+.welcome a:hover {
+  color: #007bff;
+}
+
+@media (max-width: 768px) {
+  .welcome h1 {
+    font-size: 6vw;
+  }
+
+  .welcome a {
+    font-size: 4vw;
+  }
+}

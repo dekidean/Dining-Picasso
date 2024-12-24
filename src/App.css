@@ -1,0 +1,41 @@
+
+
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden; 
+}
+
+
+header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 10; 
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #ddd;
+}
+
+
+footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  z-index: 10;
+  background-color: #f8f9fa;
+  border-top: 1px solid #ddd;
+  text-align: center;
+  padding: 1rem;
+}
+
+
+.main-content {
+  flex: 1;
+  margin-top: 70px; 
+  margin-bottom: 70px; 
+  overflow-y: auto; /
+}

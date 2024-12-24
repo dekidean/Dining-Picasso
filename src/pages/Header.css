@@ -1,0 +1,47 @@
+/* Header.css */
+header {
+  background: #f8f9fa;
+  border-bottom: 1px solid #ddd;
+  position: fixed;
+}
+
+nav {
+  display: flex;
+  justify-content: space-around;
+}
+
+nav a {
+  margin: 0 10px;
+  text-decoration: none;
+  color: #333;
+  font-weight: bold;
+}
+
+nav a:hover {
+  color: #007bff;
+}
+
+nav a.active {
+  border-bottom: 2px solid #007bff;
+}
+
+@media (max-width: 768px) {
+  nav {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  nav a {
+    margin: 5px 0;
+  }
+}
+
+header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 60px; /* Adjust as needed for your header size */
+  background-color: #f8f9fa;
+  z-index: 1; /* Higher z-index to ensure header stays above */
+}
