@@ -1,7 +1,14 @@
 import { useState, useEffect, useCallback } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { Meal } from "../MealTypes";
-import "./MealDetails.css";
+import {
+  Button,
+  Container,
+  Typography,
+  List,
+  ListItem,
+  ListItemText,
+} from "@mui/material";
 
 const MealDetails = () => {
   const { idMeal } = useParams<{ idMeal: string }>();
@@ -27,8 +34,7 @@ const MealDetails = () => {
     } finally {
       setLoading(false);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [idMeal]);
+  }, [idMeal, API_URL]);
 
   const fetchRandomMeal = async () => {
     try {
@@ -49,8 +55,14 @@ const MealDetails = () => {
     }
   }, [idMeal, fetchMealDetails]);
 
-  if (loading) return <p>Loading meal details...</p>;
-  if (error) return <p>{error}</p>;
+  if (loading)
+    return <Typography variant="h6">Loading meal details...</Typography>;
+  if (error)
+    return (
+      <Typography variant="h6" color="error">
+        {error}
+      </Typography>
+    );
   if (!meal) return null;
 
   const ingredients = Array.from({ length: 20 })
@@ -62,52 +74,70 @@ const MealDetails = () => {
     .filter(Boolean);
 
   return (
-    <div className="meal-details-container">
-      {/* Buttons at the top */}
+    <Container maxWidth="md">
+      {/* Buttons */}
       <div className="button-container">
-        <Link to="/" className="button">
-          Go Home
-        </Link>
-        <button onClick={fetchRandomMeal} className="button">
+        <Button
+          component={Link}
+          to="/menu"
+          variant="contained"
+          color="secondary"
+        >
+          Back to Categories
+        </Button>
+        <Button onClick={fetchRandomMeal} variant="contained" color="primary">
           Random Meal
-        </button>
+        </Button>
       </div>
+      <Typography variant="h4" gutterBottom textAlign="center">
+        {meal.strMeal}
+      </Typography>
 
-      {/* Meal details */}
-      <h1>{meal.strMeal}</h1>
-      <img src={meal.strMealThumb} alt={meal.strMeal} className="meal-image" />
-      <p>
+      <img
+        src={meal.strMealThumb}
+        alt={meal.strMeal}
+        style={{
+          width: "100%",
+          maxHeight: "400px",
+          objectFit: "cover",
+          borderRadius: 10,
+          marginBottom: 20,
+        }}
+      />
+      <Typography variant="subtitle1" color="textSecondary" gutterBottom>
         <strong>Category:</strong> {meal.strCategory}
-      </p>
-      <p>
+      </Typography>
+      <Typography variant="subtitle1" color="textSecondary">
         <strong>Area:</strong> {meal.strArea}
-      </p>
-      <p>
+      </Typography>
+      <Typography variant="body1" paragraph>
         <strong>Instructions:</strong> {meal.strInstructions}
-      </p>
-      <h3>Ingredients</h3>
-      <ul>
+      </Typography>
+      <Typography variant="h6">Ingredients</Typography>
+      <List>
         {ingredients.map((item, index) => (
-          <li key={index}>{item}</li>
+          <ListItem key={index}>
+            <ListItemText primary={item} />
+          </ListItem>
         ))}
-      </ul>
-      <div>Drink altternate :any</div>
+      </List>
 
       {meal.strYoutube && (
         <div className="youtube-button-container">
-          <button
+          <Button
             onClick={() => {
               if (meal.strYoutube) {
                 window.open(String(meal.strYoutube), "_blank");
               }
             }}
-            className="button youtube-button"
+            variant="contained"
+            color="info"
           >
             Youtube Link
-          </button>
+          </Button>
         </div>
       )}
-    </div>
+    </Container>
   );
 };
 

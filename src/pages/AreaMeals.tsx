@@ -43,9 +43,11 @@ const AreaMeals = () => {
   if (error) return <p>{error}</p>;
 
   return (
-    <div>
-      <h1>{area} Dishes</h1>
-
+    <div className="area-meals-container">
+      {/* <h1 className="center-h1">{area} Dishes</h1> */}
+      <Link to="/menu" className="center-h1">
+        Back to Categories
+      </Link>
       {/* Search Area */}
       <div className="search-area">
         <input

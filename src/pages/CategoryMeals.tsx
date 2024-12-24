@@ -38,21 +38,22 @@ const CategoryMeals = () => {
   };
 
   const filteredMeals = meals.filter((meal: Meal) =>
-    meal.idMeal.toLowerCase().includes(searchQuery.toLowerCase())
+    meal.strMeal.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   if (loading) return <p>Loading meals...</p>;
   if (error) return <p>{error}</p>;
 
   return (
-    <div>
-      <h1>{category} Meals</h1>
-
+    <div className="area-meals-container">
+      <Link to="/menu" className="center-h1">
+        Back to Categories
+      </Link>
       {/* Search Area */}
       <div className="search-area">
         <input
           type="text"
-          placeholder="Search by name or ID"
+          placeholder="Search by name"
           value={searchQuery}
           onChange={handleSearch}
         />
@@ -60,26 +61,30 @@ const CategoryMeals = () => {
 
       {/* Meals Grid */}
       <div className="meals-grid">
-        {filteredMeals.map((meal: Meal, index) => (
-          <div key={meal.idMeal} className="meal-card">
-            <img
-              src={meal.strMealThumb}
-              alt={meal.strMeal}
-              className="meal-image"
-            />
-            <div className="meal-info">
-              <h3>{meal.strMeal}</h3>
-              <Link
-                to={`/meal/${meal.idMeal}`}
-                className={`see-more-link ${
-                  index === filteredMeals.length - 1 ? "last-meal" : ""
-                }`}
-              >
-                See More
-              </Link>
+        {filteredMeals.length > 0 ? (
+          filteredMeals.map((meal: Meal, index) => (
+            <div key={meal.idMeal} className="meal-card">
+              <img
+                src={meal.strMealThumb}
+                alt={meal.strMeal}
+                className="meal-image"
+              />
+              <div className="meal-info">
+                <h3>{meal.strMeal}</h3>
+                <Link
+                  to={`/meal/${meal.idMeal}`}
+                  className={`see-more-link ${
+                    index === filteredMeals.length - 1 ? "last-meal" : ""
+                  }`}
+                >
+                  See More
+                </Link>
+              </div>
             </div>
-          </div>
-        ))}
+          ))
+        ) : (
+          <p>No meals match your search.</p>
+        )}
       </div>
     </div>
   );

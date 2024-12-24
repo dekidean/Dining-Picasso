@@ -20,7 +20,7 @@
   height: 30%;
   background-color: rgba(255, 255, 255, 0.5);
   transform: translate(-50%, -50%);
-  border-radius: 15px; /* Curved edges */
+  border-radius: 15px;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
 }
 
@@ -28,7 +28,7 @@
   position: relative;
   z-index: 1;
   color: white;
-  font-size: 3vw;
+  font-size: clamp(2rem, 5vw, 4rem);
 }
 
 .welcome nav {
@@ -40,16 +40,21 @@
 .welcome a {
   margin: 10px;
   color: white;
-  font-size: 1.5vw;
+  font-size: clamp(1rem, 3vw, 2rem);
   text-decoration: none;
+  transition: all 0.3s ease-in-out;
+}
+
+.welcome a:hover {
+  color: #007bff;
 }
 
 @media (max-width: 768px) {
   .welcome h1 {
-    font-size: 4vw;
+    font-size: 6vw;
   }
 
   .welcome a {
-    font-size: 3vw;
+    font-size: 4vw;
   }
 }

@@ -1,9 +1,9 @@
-import { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Category, Area, Meal, ViewByModel } from "../MealTypes";
 import { Link } from "react-router-dom";
-import "./Menu.css";
 import SearchArea from "./SearchArea";
+import "./Menu.css";
 
 const Menu = () => {
   const [categories, setCategories] = useState<Category[]>([]);
@@ -60,15 +60,9 @@ const Menu = () => {
   if (error) return <p>{error}</p>;
 
   return (
-    <div>
+    <div className="menu-container">
+      {/* Button Group */}
       <div className="button-group">
-        {view === ViewByModel.Categories && (
-          <SearchArea
-            placeholder="Search for Categories"
-            onChange={handleSearch}
-            searchQuery={searchQuery}
-          />
-        )}
         <button
           onClick={() => setView(ViewByModel.Categories)}
           className={`menu-button ${
@@ -78,13 +72,6 @@ const Menu = () => {
           Categories
         </button>
 
-        {view === ViewByModel.Areas && (
-          <SearchArea
-            placeholder="Search for National Dishes"
-            onChange={handleSearch}
-            searchQuery={searchQuery}
-          />
-        )}
         <button
           onClick={() => setView(ViewByModel.Areas)}
           className={`menu-button ${
@@ -94,13 +81,6 @@ const Menu = () => {
           National Dishes
         </button>
 
-        {view === ViewByModel.AllMeals && (
-          <SearchArea
-            placeholder="Search All Meals"
-            onChange={handleSearch}
-            searchQuery={searchQuery}
-          />
-        )}
         <button
           onClick={() => setView(ViewByModel.AllMeals)}
           className={`menu-button ${
@@ -111,30 +91,69 @@ const Menu = () => {
         </button>
       </div>
 
+      {/* Search Bar under the active button */}
+      {view === ViewByModel.Categories && (
+        <SearchArea
+          placeholder="Search for Categories"
+          onChange={handleSearch}
+          searchQuery={searchQuery}
+        />
+      )}
+      {view === ViewByModel.Areas && (
+        <SearchArea
+          placeholder="Search for National Dishes"
+          onChange={handleSearch}
+          searchQuery={searchQuery}
+        />
+      )}
+      {view === ViewByModel.AllMeals && (
+        <SearchArea
+          placeholder="Search All Meals"
+          onChange={handleSearch}
+          searchQuery={searchQuery}
+        />
+      )}
+
+      {/* Menu Grid */}
       <div className="menu-grid">
-        {view === ViewByModel.Categories
-          ? filteredCategories.map((category) => (
+        {view === ViewByModel.Categories &&
+          (filteredCategories.length > 0 ? (
+            filteredCategories.map((category) => (
               <div key={category.strCategory} className="menu-card">
                 <Link to={`/category/${category.strCategory}`}>
                   <h3>{category.strCategory}</h3>
                 </Link>
               </div>
             ))
-          : view === ViewByModel.Areas
-          ? filteredAreas.map((area) => (
+          ) : (
+            <p className="no-results">No categories match your search.</p>
+          ))}
+
+        {view === ViewByModel.Areas &&
+          (filteredAreas.length > 0 ? (
+            filteredAreas.map((area) => (
               <div key={area.strArea} className="menu-card">
                 <Link to={`/area/${area.strArea}`}>
                   <h3>{area.strArea}</h3>
                 </Link>
               </div>
             ))
-          : filteredAllMeals.map((meal) => (
+          ) : (
+            <p className="no-results">No national dishes match your search.</p>
+          ))}
+
+        {view === ViewByModel.AllMeals &&
+          (filteredAllMeals.length > 0 ? (
+            filteredAllMeals.map((meal) => (
               <div key={meal.idMeal} className="menu-card">
                 <Link to={`/meal/${meal.idMeal}`}>
                   <h3>{meal.strMeal}</h3>
                 </Link>
               </div>
-            ))}
+            ))
+          ) : (
+            <p className="no-results">No meals match your search.</p>
+          ))}
       </div>
     </div>
   );

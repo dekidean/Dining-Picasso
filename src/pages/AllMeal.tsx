@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import { Button } from "@mui/material";
 import { Meal } from "../MealTypes";
 import "./Meals.css";
 
@@ -48,9 +49,21 @@ const AllMeals = () => {
             />
             <div className="meal-info">
               <h3>{meal.strMeal}</h3>
-              <Link to={`/meal/${meal.idMeal}`} className="see-more-link">
+              <Button
+                component={Link}
+                to={`/meal/${meal.idMeal}`}
+                variant="contained"
+                color="primary"
+                fullWidth
+                sx={{
+                  backgroundColor: "secondary.main",
+                  ":hover": {
+                    backgroundColor: "secondary.dark",
+                  },
+                }}
+              >
                 See More
-              </Link>
+              </Button>
             </div>
           </div>
         ))}

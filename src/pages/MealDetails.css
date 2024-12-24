@@ -8,7 +8,8 @@
 }
 
 .meal-image {
-  width: 100%;
+  width: 50%;
+  height: 50%;
   border-radius: 10px;
   margin-bottom: 20px;
 }
@@ -51,6 +52,7 @@ iframe {
   border: none;
   border-radius: 5px;
   cursor: pointer;
+  height: 100%;
 }
 
 .button:hover {

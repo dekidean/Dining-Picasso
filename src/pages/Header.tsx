@@ -1,5 +1,5 @@
 import { NavLink } from "react-router-dom";
-import "./Header.css";
+import { AppBar, Toolbar, Button, Box } from "@mui/material";
 
 type NavLinkItem = {
   path: string;
@@ -13,21 +13,30 @@ const Header = () => {
   ];
 
   return (
-    <header>
-      <nav className="button-group">
-        {navLinks.map((link: NavLinkItem) => (
-          <NavLink
-            key={link.path}
-            to={link.path}
-            className={({ isActive }) =>
-              isActive ? "menu-button active" : "menu-button"
-            }
-          >
-            {link.label}
-          </NavLink>
-        ))}
-      </nav>
-    </header>
+    <AppBar position="static" color="primary" sx={{ boxShadow: "none" }}>
+      <Toolbar sx={{ justifyContent: "center" }}>
+        <Box sx={{ display: "flex", gap: "1rem" }}>
+          {navLinks.map((link) => (
+            <Button
+              key={link.path}
+              component={NavLink}
+              to={link.path}
+              sx={{
+                textTransform: "none",
+                fontWeight: "bold",
+                color: "white",
+                "&.active": {
+                  backgroundColor: "rgba(255, 255, 255, 0.2)",
+                },
+              }}
+              className={window.location.pathname === link.path ? "active" : ""}
+            >
+              {link.label}
+            </Button>
+          ))}
+        </Box>
+      </Toolbar>
+    </AppBar>
   );
 };
 
