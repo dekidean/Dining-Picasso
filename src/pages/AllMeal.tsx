@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { Button } from "@mui/material";
+import { Button, CircularProgress } from "@mui/material";
 import { Meal } from "../MealTypes";
 import "./Meals.css";
 
@@ -9,8 +9,8 @@ const AllMeals = () => {
   const [meals, setMeals] = useState<Meal[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-
   const API_URL = import.meta.env.VITE_MEALDB_API;
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchAllMeals = async () => {
@@ -33,8 +33,17 @@ const AllMeals = () => {
     fetchAllMeals();
   }, [API_URL]);
 
-  if (loading) return <p>Loading meals...</p>;
-  if (error) return <p>{error}</p>;
+  if (loading) {
+    return (
+      <div className="loading-container">
+        <CircularProgress />
+      </div>
+    );
+  }
+
+  if (error) {
+    return <p>{error}</p>;
+  }
 
   return (
     <div>
@@ -50,8 +59,9 @@ const AllMeals = () => {
             <div className="meal-info">
               <h3>{meal.strMeal}</h3>
               <Button
-                component={Link}
-                to={`/meal/${meal.idMeal}`}
+                onClick={() =>
+                  navigate(`/meal/${meal.idMeal}`, { state: { from: "all" } })
+                }
                 variant="contained"
                 color="primary"
                 fullWidth

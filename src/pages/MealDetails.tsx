@@ -1,10 +1,12 @@
 import { useState, useEffect, useCallback } from "react";
-import { useParams, Link, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { Meal } from "../MealTypes";
 import {
   Button,
   Container,
   Typography,
+  Box,
+  CircularProgress,
   List,
   ListItem,
   ListItemText,
@@ -17,6 +19,9 @@ const MealDetails = () => {
   const [error, setError] = useState<string>();
   const API_URL = import.meta.env.VITE_MEALDB_API;
   const navigate = useNavigate();
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const activeTab = queryParams.get("active");
 
   const fetchMealDetails = useCallback(async () => {
     setLoading(true);
@@ -42,7 +47,7 @@ const MealDetails = () => {
       const data = await response.json();
       if (data.meals) {
         const randomMealId = data.meals[0].idMeal;
-        navigate(`/meal/${randomMealId}`);
+        navigate(`/meal/${randomMealId}?active=${activeTab}`);
       }
     } catch (err) {
       console.error("Error fetching random meal:", err);
@@ -55,14 +60,27 @@ const MealDetails = () => {
     }
   }, [idMeal, fetchMealDetails]);
 
-  if (loading)
-    return <Typography variant="h6">Loading meal details...</Typography>;
-  if (error)
+  if (loading) {
+    return (
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        height="50vh"
+      >
+        <CircularProgress />
+      </Box>
+    );
+  }
+
+  if (error) {
     return (
       <Typography variant="h6" color="error">
         {error}
       </Typography>
     );
+  }
+
   if (!meal) return null;
 
   const ingredients = Array.from({ length: 20 })
@@ -73,22 +91,24 @@ const MealDetails = () => {
     })
     .filter(Boolean);
 
+  const handleBackClick = () => {
+    navigate(-1);
+  };
+
   return (
     <Container maxWidth="md">
       {/* Buttons */}
-      <div className="button-container">
-        <Button
-          component={Link}
-          to="/menu"
-          variant="contained"
-          color="secondary"
-        >
-          Back to Categories
+      <Box display="flex" justifyContent="flex-start" gap={2} mb={2}>
+        <Button onClick={handleBackClick} variant="contained" color="secondary">
+          Back to previous page
         </Button>
+
         <Button onClick={fetchRandomMeal} variant="contained" color="primary">
           Random Meal
         </Button>
-      </div>
+      </Box>
+
+      {/* Meal Details */}
       <Typography variant="h4" gutterBottom textAlign="center">
         {meal.strMeal}
       </Typography>
@@ -113,6 +133,8 @@ const MealDetails = () => {
       <Typography variant="body1" paragraph>
         <strong>Instructions:</strong> {meal.strInstructions}
       </Typography>
+
+      {/* Ingredients */}
       <Typography variant="h6">Ingredients</Typography>
       <List>
         {ingredients.map((item, index) => (
@@ -123,7 +145,7 @@ const MealDetails = () => {
       </List>
 
       {meal.strYoutube && (
-        <div className="youtube-button-container">
+        <Box textAlign="center" mt={2}>
           <Button
             onClick={() => {
               if (meal.strYoutube) {
@@ -135,7 +157,7 @@ const MealDetails = () => {
           >
             Youtube Link
           </Button>
-        </div>
+        </Box>
       )}
     </Container>
   );

@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
+import { CircularProgress } from "@mui/material";
 import { Meal } from "../MealTypes";
 import "./Meals.css";
 
@@ -30,8 +31,7 @@ const CategoryMeals = () => {
     if (category) {
       fetchMealsByCategory();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [category]);
+  }, [category, API_URL]);
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
@@ -41,28 +41,46 @@ const CategoryMeals = () => {
     meal.strMeal.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  if (loading) return <p>Loading meals...</p>;
-  if (error) return <p>{error}</p>;
+  if (loading) {
+    return (
+      <div className="loading-container">
+        <CircularProgress />
+      </div>
+    );
+  }
+
+  if (error) {
+    return <p>{error}</p>;
+  }
 
   return (
     <div className="area-meals-container">
-      <Link to="/menu" className="center-h1">
-        Back to Categories
-      </Link>
-      {/* Search Area */}
-      <div className="search-area">
-        <input
-          type="text"
-          placeholder="Search by name"
-          value={searchQuery}
-          onChange={handleSearch}
-        />
+      {/* Header Section: Button and Search Area */}
+      <div className="header-container">
+        <div className="button-group">
+          <Link
+            to="/menu"
+            state={{ activeTab: "categories" }}
+            className="menu-button active"
+          >
+            Back to Categories
+          </Link>
+        </div>
+
+        <div className="search-area">
+          <input
+            type="text"
+            placeholder="Search by name"
+            value={searchQuery}
+            onChange={handleSearch}
+          />
+        </div>
       </div>
 
       {/* Meals Grid */}
       <div className="meals-grid">
         {filteredMeals.length > 0 ? (
-          filteredMeals.map((meal: Meal, index) => (
+          filteredMeals.map((meal: Meal) => (
             <div key={meal.idMeal} className="meal-card">
               <img
                 src={meal.strMealThumb}
@@ -71,12 +89,7 @@ const CategoryMeals = () => {
               />
               <div className="meal-info">
                 <h3>{meal.strMeal}</h3>
-                <Link
-                  to={`/meal/${meal.idMeal}`}
-                  className={`see-more-link ${
-                    index === filteredMeals.length - 1 ? "last-meal" : ""
-                  }`}
-                >
+                <Link to={`/meal/${meal.idMeal}`} className="see-more-link">
                   See More
                 </Link>
               </div>

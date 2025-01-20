@@ -6,7 +6,7 @@
   display: flex;
   justify-content: center;
   gap: 10px;
-  margin-bottom: 10px;
+  /* margin-bottom: 20px; */
 }
 
 .menu-button {
@@ -42,9 +42,32 @@
   text-align: center;
   background-color: #fff;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.menu-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.link-card {
+  text-decoration: none;
+  color: inherit;
+  display: block;
 }
 
 .no-results {
+  font-size: 1.2rem;
+  color: #555;
   text-align: center;
-  color: #888;
+  grid-column: 1 / -1;
+  margin-top: 20px;
+}
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
 }

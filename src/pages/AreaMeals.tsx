@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { CircularProgress } from "@mui/material"; // Import CircularProgress
 import { Meal } from "../MealTypes";
 import "./Meals.css";
 
@@ -10,6 +11,7 @@ const AreaMeals = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>("");
+  const navigate = useNavigate();
 
   const API_URL = import.meta.env.VITE_MEALDB_API;
 
@@ -28,8 +30,7 @@ const AreaMeals = () => {
     };
 
     fetchMealsByArea();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [area]);
+  }, [area, API_URL]);
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
@@ -39,23 +40,39 @@ const AreaMeals = () => {
     meal.strMeal.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  if (loading) return <p>Loading meals...</p>;
-  if (error) return <p>{error}</p>;
+  if (loading) {
+    return (
+      <div className="loading-container">
+        <CircularProgress />
+      </div>
+    );
+  }
+
+  if (error) {
+    return <p>{error}</p>;
+  }
 
   return (
     <div className="area-meals-container">
-      {/* <h1 className="center-h1">{area} Dishes</h1> */}
-      <Link to="/menu" className="center-h1">
-        Back to Categories
-      </Link>
-      {/* Search Area */}
-      <div className="search-area">
-        <input
-          type="text"
-          placeholder="Search by name"
-          value={searchQuery}
-          onChange={handleSearch}
-        />
+      {/* Header Section: Button and Search Area */}
+      <div className="header-container">
+        <div className="button-group">
+          <button
+            className="menu-button active"
+            onClick={() => navigate("/menu", { state: { activeTab: "areas" } })}
+          >
+            Back to National Dishes
+          </button>
+        </div>
+
+        <div className="search-area">
+          <input
+            type="text"
+            placeholder="Search by name"
+            value={searchQuery}
+            onChange={handleSearch}
+          />
+        </div>
       </div>
 
       {/* Meals Grid */}

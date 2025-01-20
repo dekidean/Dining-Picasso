@@ -27,7 +27,7 @@
 .welcome h1 {
   position: relative;
   z-index: 1;
-  color: white;
+  color: #022f5f;
   font-size: clamp(2rem, 5vw, 4rem);
 }
 
