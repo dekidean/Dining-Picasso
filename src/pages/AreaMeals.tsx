@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { CircularProgress } from "@mui/material"; // Import CircularProgress
+import { CircularProgress } from "@mui/material";
 import { Meal } from "../MealTypes";
 import "./Meals.css";
 
@@ -54,7 +54,6 @@ const AreaMeals = () => {
 
   return (
     <div className="area-meals-container">
-      {/* Header Section: Button and Search Area */}
       <div className="header-container">
         <div className="button-group">
           <button
@@ -75,7 +74,6 @@ const AreaMeals = () => {
         </div>
       </div>
 
-      {/* Meals Grid */}
       <div className="meals-grid">
         {filteredMeals.length > 0 ? (
           filteredMeals.map((meal: Meal) => (
@@ -87,7 +85,11 @@ const AreaMeals = () => {
               />
               <div className="meal-info">
                 <h3>{meal.strMeal}</h3>
-                <Link to={`/meal/${meal.idMeal}`} className="see-more-link">
+                <Link
+                  to={`/meal/${meal.idMeal}`}
+                  state={{ activeTab: "areas" }}
+                  className="see-more-link"
+                >
                   See More
                 </Link>
               </div>

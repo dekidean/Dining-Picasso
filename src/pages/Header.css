@@ -1,4 +1,3 @@
-/* Header.css */
 header {
   background: #f8f9fa;
   border-bottom: 1px solid #ddd;
@@ -41,7 +40,7 @@ header {
   top: 0;
   left: 0;
   width: 100%;
-  height: 60px; /* Adjust as needed for your header size */
+  height: 60px;
   background-color: #f8f9fa;
-  z-index: 1; /* Higher z-index to ensure header stays above */
+  z-index: 1;
 }

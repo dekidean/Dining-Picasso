@@ -20,8 +20,7 @@ const MealDetails = () => {
   const API_URL = import.meta.env.VITE_MEALDB_API;
   const navigate = useNavigate();
   const location = useLocation();
-  const queryParams = new URLSearchParams(location.search);
-  const activeTab = queryParams.get("active");
+  const activeTab = location.state?.activeTab || "categories";
 
   const fetchMealDetails = useCallback(async () => {
     setLoading(true);
@@ -47,7 +46,9 @@ const MealDetails = () => {
       const data = await response.json();
       if (data.meals) {
         const randomMealId = data.meals[0].idMeal;
-        navigate(`/meal/${randomMealId}?active=${activeTab}`);
+        navigate(`/meal/${randomMealId}`, {
+          state: { activeTab },
+        });
       }
     } catch (err) {
       console.error("Error fetching random meal:", err);
@@ -59,6 +60,13 @@ const MealDetails = () => {
       fetchMealDetails();
     }
   }, [idMeal, fetchMealDetails]);
+
+  const handleBackClick = () => {
+    navigate("/menu", {
+      state: { activeTab },
+      replace: true,
+    });
+  };
 
   if (loading) {
     return (
@@ -75,7 +83,7 @@ const MealDetails = () => {
 
   if (error) {
     return (
-      <Typography variant="h6" color="error">
+      <Typography variant="h6" color="error" textAlign="center">
         {error}
       </Typography>
     );
@@ -91,24 +99,22 @@ const MealDetails = () => {
     })
     .filter(Boolean);
 
-  const handleBackClick = () => {
-    navigate(-1);
-  };
-
   return (
     <Container maxWidth="md">
-      {/* Buttons */}
       <Box display="flex" justifyContent="flex-start" gap={2} mb={2}>
         <Button onClick={handleBackClick} variant="contained" color="secondary">
-          Back to previous page
+          Back to{" "}
+          {activeTab === "categories"
+            ? "Categories"
+            : activeTab === "areas"
+            ? "National Dishes"
+            : "All Meals"}
         </Button>
-
         <Button onClick={fetchRandomMeal} variant="contained" color="primary">
           Random Meal
         </Button>
       </Box>
 
-      {/* Meal Details */}
       <Typography variant="h4" gutterBottom textAlign="center">
         {meal.strMeal}
       </Typography>
@@ -124,6 +130,7 @@ const MealDetails = () => {
           marginBottom: 20,
         }}
       />
+
       <Typography variant="subtitle1" color="textSecondary" gutterBottom>
         <strong>Category:</strong> {meal.strCategory}
       </Typography>
@@ -134,7 +141,6 @@ const MealDetails = () => {
         <strong>Instructions:</strong> {meal.strInstructions}
       </Typography>
 
-      {/* Ingredients */}
       <Typography variant="h6">Ingredients</Typography>
       <List>
         {ingredients.map((item, index) => (
@@ -147,15 +153,11 @@ const MealDetails = () => {
       {meal.strYoutube && (
         <Box textAlign="center" mt={2}>
           <Button
-            onClick={() => {
-              if (meal.strYoutube) {
-                window.open(String(meal.strYoutube), "_blank");
-              }
-            }}
+            onClick={() => window.open(meal.strYoutube as string, "_blank")}
             variant="contained"
             color="info"
           >
-            Youtube Link
+            Watch on YouTube
           </Button>
         </Box>
       )}

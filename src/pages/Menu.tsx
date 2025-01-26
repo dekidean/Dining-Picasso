@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import CircularProgress from "@mui/material/CircularProgress";
-import { Category, Area, Meal, ViewByModel } from "../MealTypes";
+import { Category, Area, Meal } from "../MealTypes"; // Removed ViewByModel import
 import SearchArea from "./SearchArea";
 import "./Menu.css";
 
@@ -10,7 +10,6 @@ const Menu = () => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [areas, setAreas] = useState<Area[]>([]);
   const [allMeals, setAllMeals] = useState<Meal[]>([]);
-  const [view, setView] = useState<ViewByModel>(ViewByModel.Categories);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>("");
@@ -19,8 +18,9 @@ const Menu = () => {
   const navigate = useNavigate();
   const API_URL = import.meta.env.VITE_MEALDB_API;
 
-  const queryParams = new URLSearchParams(location.search);
-  const activeTab = queryParams.get("active") || "categories"; // Default to categories
+  const [activeTab, setActiveTab] = useState(
+    location.state?.activeTab || "categories"
+  );
 
   useEffect(() => {
     const fetchData = async () => {
@@ -46,16 +46,6 @@ const Menu = () => {
     fetchData();
   }, [API_URL]);
 
-  useEffect(() => {
-    if (activeTab === "areas") {
-      setView(ViewByModel.Areas);
-    } else if (activeTab === "allMeals") {
-      setView(ViewByModel.AllMeals);
-    } else {
-      setView(ViewByModel.Categories);
-    }
-  }, [activeTab]);
-
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
   };
@@ -72,6 +62,14 @@ const Menu = () => {
     meal.strMeal.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  const handleTabClick = (tab: string) => {
+    setActiveTab(tab);
+    navigate("/menu", {
+      state: { activeTab: tab },
+      replace: true,
+    });
+  };
+
   if (loading) {
     return (
       <div className="loading-container">
@@ -80,119 +78,106 @@ const Menu = () => {
     );
   }
 
-  if (error) return <p>{error}</p>;
-
-  const handleTabClick = (tab: string) => {
-    navigate(`/menu?active=${tab}`);
-  };
+  if (error) return <p className="error-message">{error}</p>;
 
   return (
     <div className="menu-container">
-      {/* Button Group */}
       <div className="button-group">
-        <div
-          role="button"
-          tabIndex={0}
+        <button
           onClick={() => handleTabClick("categories")}
           className={`menu-button ${
-            view === ViewByModel.Categories ? "active" : ""
+            activeTab === "categories" ? "active" : ""
           }`}
         >
           Categories
-        </div>
+        </button>
 
-        <div
-          role="button"
-          tabIndex={0}
+        <button
           onClick={() => handleTabClick("areas")}
-          className={`menu-button ${
-            view === ViewByModel.Areas ? "active" : ""
-          }`}
+          className={`menu-button ${activeTab === "areas" ? "active" : ""}`}
         >
           National Dishes
-        </div>
+        </button>
 
-        <div
-          role="button"
-          tabIndex={0}
+        <button
           onClick={() => handleTabClick("allMeals")}
-          className={`menu-button ${
-            view === ViewByModel.AllMeals ? "active" : ""
-          }`}
+          className={`menu-button ${activeTab === "allMeals" ? "active" : ""}`}
         >
           All Meals
-        </div>
+        </button>
       </div>
 
-      {/* Search Area */}
-      {view === ViewByModel.Categories && (
-        <SearchArea
-          placeholder="Search for Categories"
-          onChange={handleSearch}
-          searchQuery={searchQuery}
-        />
-      )}
-      {view === ViewByModel.Areas && (
-        <SearchArea
-          placeholder="Search for National Dishes"
-          onChange={handleSearch}
-          searchQuery={searchQuery}
-        />
-      )}
-      {view === ViewByModel.AllMeals && (
-        <SearchArea
-          placeholder="Search All Meals"
-          onChange={handleSearch}
-          searchQuery={searchQuery}
-        />
-      )}
+      <SearchArea
+        placeholder={
+          activeTab === "categories"
+            ? "Search for Categories"
+            : activeTab === "areas"
+            ? "Search for National Dishes"
+            : "Search All Meals"
+        }
+        onChange={handleSearch}
+        searchQuery={searchQuery}
+      />
 
-      {/* Menu Grid */}
       <div className="menu-grid">
-        {view === ViewByModel.Categories &&
-          (filteredCategories.length > 0 ? (
-            filteredCategories.map((category) => (
-              <Link
-                key={category.strCategory}
-                to={`/category/${category.strCategory}`}
-                className="menu-card"
-              >
-                <h3>{category.strCategory}</h3>
-              </Link>
-            ))
-          ) : (
-            <p className="no-results">No categories match your search.</p>
-          ))}
+        {activeTab === "categories" && (
+          <>
+            {filteredCategories.length > 0 ? (
+              filteredCategories.map((category) => (
+                <Link
+                  key={category.strCategory}
+                  to={`/category/${category.strCategory}`}
+                  className="menu-card"
+                  state={{ activeTab: "categories" }}
+                >
+                  <h3>{category.strCategory}</h3>
+                </Link>
+              ))
+            ) : (
+              <p className="no-results">No categories match your search.</p>
+            )}
+          </>
+        )}
 
-        {view === ViewByModel.Areas &&
-          (filteredAreas.length > 0 ? (
-            filteredAreas.map((area) => (
-              <Link
-                key={area.strArea}
-                to={`/area/${area.strArea}`}
-                className="menu-card"
-              >
-                <h3>{area.strArea}</h3>
-              </Link>
-            ))
-          ) : (
-            <p className="no-results">No national dishes match your search.</p>
-          ))}
+        {activeTab === "areas" && (
+          <>
+            {filteredAreas.length > 0 ? (
+              filteredAreas.map((area) => (
+                <Link
+                  key={area.strArea}
+                  to={`/area/${area.strArea}`}
+                  className="menu-card"
+                  state={{ activeTab: "areas" }}
+                >
+                  <h3>{area.strArea}</h3>
+                </Link>
+              ))
+            ) : (
+              <p className="no-results">
+                No national dishes match your search.
+              </p>
+            )}
+          </>
+        )}
 
-        {view === ViewByModel.AllMeals &&
-          (filteredAllMeals.length > 0 ? (
-            filteredAllMeals.map((meal) => (
-              <Link
-                key={meal.idMeal}
-                to={`/meal/${meal.idMeal}`}
-                className="menu-card"
-              >
-                <h3>{meal.strMeal}</h3>
-              </Link>
-            ))
-          ) : (
-            <p className="no-results">No meals match your search.</p>
-          ))}
+        {activeTab === "allMeals" && (
+          <>
+            {filteredAllMeals.length > 0 ? (
+              filteredAllMeals.map((meal) => (
+                <Link
+                  key={meal.idMeal}
+                  to={`/meal/${meal.idMeal}`}
+                  className="menu-card"
+                  state={{ activeTab: "allMeals" }}
+                >
+                  <h3>{meal.strMeal}</h3>
+                </Link>
+              ))
+            ) : (
+              <p className="no-results">No meals match your search.</p>
+            )}
+          </>
+        )}
       </div>
     </div>
   );

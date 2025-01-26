@@ -55,7 +55,6 @@ const CategoryMeals = () => {
 
   return (
     <div className="area-meals-container">
-      {/* Header Section: Button and Search Area */}
       <div className="header-container">
         <div className="button-group">
           <Link
@@ -63,7 +62,7 @@ const CategoryMeals = () => {
             state={{ activeTab: "categories" }}
             className="menu-button active"
           >
-            Back to Categories
+            Back to Categories Meal
           </Link>
         </div>
 
@@ -77,7 +76,6 @@ const CategoryMeals = () => {
         </div>
       </div>
 
-      {/* Meals Grid */}
       <div className="meals-grid">
         {filteredMeals.length > 0 ? (
           filteredMeals.map((meal: Meal) => (
@@ -89,7 +87,11 @@ const CategoryMeals = () => {
               />
               <div className="meal-info">
                 <h3>{meal.strMeal}</h3>
-                <Link to={`/meal/${meal.idMeal}`} className="see-more-link">
+                <Link
+                  to={`/meal/${meal.idMeal}`}
+                  state={{ activeTab: "categories" }}
+                  className="see-more-link"
+                >
                   See More
                 </Link>
               </div>
